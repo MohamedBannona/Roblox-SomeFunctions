@@ -125,7 +125,7 @@ SomeFunctions.RemoveTagInBulk("Iron Weapon", {IronSword, IronAxe})
 function SomeFunctions.RemoveTagsFromObjects(TagToObject: {[string]: Instance | {Instance}})
 	for i, v in pairs(TagToObject) do
 		if typeof(v) == "table" then
-			SomeFunctions.RemoveTagsFromObject(i, v)
+			SomeFunctions.RemoveTagInBulk(i, v)
 		else
 			CollectionService:RemoveTag(v, i)
 		end
