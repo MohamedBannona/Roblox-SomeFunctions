@@ -25,7 +25,7 @@ function SomeFunctions.RecursiveFindFirstChildOfClass(Parent: Instance, Class: s
 	if typeof(Class) ~= "string" then warn("Class:", Class, "must be a string") return end
 	for i, v in ipairs(Parent:GetDescendants()) do
 		if v:IsA(Class) then
-			return Class
+			return v
 		end
 	end
 end
