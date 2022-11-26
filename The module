@@ -6,11 +6,11 @@ local SomeFunctions= {}
 
 --------------------FindFirstChild Functions--------------------
 
-function SomeFunctions.FindFirstChildWithTag(Parent: Instance, tag: string, Recursive: boolean?): Instance?
+function SomeFunctions.FindFirstChildWithTag(Parent: Instance, Tag: string, Recursive: boolean?): Instance?
 	if typeof(Parent) ~= "Instance" then warn("Parent:", Parent, "must be an instance") return end
-	if typeof(tag) ~= "string" then warn("Tag:", tag, "must be a string") return end
+	if typeof(Tag) ~= "string" then warn("Tag:", Tag, "must be a string") return end
 	for i, v in ipairs(Recursive and Parent:GetDescendants() or Parent:GetChildren()) do
-		if CollectionService:HasTag(v, tag) then
+		if CollectionService:HasTag(v, Tag) then
 			return v
 		end
 	end
@@ -18,6 +18,19 @@ function SomeFunctions.FindFirstChildWithTag(Parent: Instance, tag: string, Recu
 end
 --[[^Returns first child found with tag
 SomeFunctions.FindFirstChildWithTag(Character, "Weapon")
+]]
+
+function SomeFunctions.RecursiveFindFirstChildOfClass(Parent: Instance, Class: string): Instance?
+	if typeof(Parent) ~= "Instance" then warn("Parent:", Parent, "must be an instance") return end
+	if typeof(Class) ~= "string" then warn("Class:", Class, "must be a string") return end
+	for i, v in ipairs(Parent:GetDescendants()) do
+		if v:IsA(Class) then
+			return Class
+		end
+	end
+end
+--[[^Returns first Descendant found of a class
+function SomeFunctions.RecursiveFindFirstChildOfClass(Character, "IntValue")
 ]]
 
 
@@ -106,7 +119,7 @@ function SomeFunctions.AddTagsToObjects(TagToObject: {[string]: Instance | {Inst
 		end
 	end
 end
---[[Adds each tag to the instance(s) associated with it
+--[[^Adds each tag to the instance(s) associated with it
 SomeFunctions.AddTagsToObjects({["Iron Weapon"] = {IronSword, IronAxe}, "Potion" = HealthPotion})
 ]]
 
@@ -118,7 +131,7 @@ function SomeFunctions.RemoveTagInBulk(Tag: string, Instances: {})
 		CollectionService:RemoveTag(v, Tag)
 	end
 end
---[[Removes same tag from multiple instances
+--[[^Removes same tag from multiple instances
 SomeFunctions.RemoveTagInBulk("Iron Weapon", {IronSword, IronAxe})
 ]]
 
@@ -131,8 +144,41 @@ function SomeFunctions.RemoveTagsFromObjects(TagToObject: {[string]: Instance | 
 		end
 	end
 end
---[[Remove each tag from the instance(s) associated with it
+--[[^Remove each tag from the instance(s) associated with it
 SomeFunctions.RemoveTagsFromObjects({["Iron Weapon"] = {IronSword, IronAxe}, "Potion" = HealthPotion})
+]]
+
+
+--------------------Ancestry Functions--------------------
+
+function SomeFunctions.GetAncestorsInTable(Child: Instance): Table?
+	if typeof(Child) ~= "Instance" then warn("Child:", Child, "must be an instance") return end
+	if Child.Parent == nil then
+		return nil
+	end
+	local ret = {Child.Parent}
+	repeat
+		task.wait()
+		table.insert(ret, ret[#ret].Parent)
+	until ret[#ret].Parent == game
+	return ret
+end
+--[[^Returns all acnestors of child until game in a table or nil if chil has no parent
+function SomeFunctions.GetAncestorsInTable(Part)
+]]
+
+function SomeFunctions.FindFirstAncestorWithTag(Child: Instance, Tag: string): Instance?
+	if typeof(Child) ~= "Instance" then warn("Child:", Child, "must be an instance") return end
+	if typeof(Tag) ~= "string" then warn("Tag:", Tag, "must be a string") return end
+	for i, v in ipairs(SomeFunctions.GetAncestorsInTable(Child)) do
+		if CollectionService:HasTag(v, Tag) then
+			return v
+		end
+	end
+	return nil
+end
+--[[^Returns first ancestor of Child found with tag Tag or nil if not found
+function SomeFunctions.FindFirstAncestorWithTag(Wand, "Wizard"): Instance?
 ]]
 
 return SomeFunctions
