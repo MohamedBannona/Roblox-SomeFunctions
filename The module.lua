@@ -6,7 +6,7 @@ local SomeFunctions= {}
 
 --------------------FindFirstChild Functions--------------------
 
-function SomeFunctions.FindFirstChildWithTag(Parent: Instance, Tag: string, Recursive: boolean?): Instance?
+function SomeFunctions.FindFirstChildWithTag(Parent: Instance, Tag: string, Recursive: boolean?): Instance
 	if typeof(Parent) ~= "Instance" then warn("Parent:", Parent, "must be an instance") return end
 	if typeof(Tag) ~= "string" then warn("Tag:", Tag, "must be a string") return end
 	for i, v in ipairs(Recursive and Parent:GetDescendants() or Parent:GetChildren()) do
@@ -20,11 +20,11 @@ end
 SomeFunctions.FindFirstChildWithTag(Character, "Weapon")
 ]]
 
-function SomeFunctions.RecursiveFindFirstChildOfClass(Parent: Instance, Class: string): Instance?
+function SomeFunctions.RecursiveFindFirstChildOfClass(Parent: Instance, Class: string): Instance
 	if typeof(Parent) ~= "Instance" then warn("Parent:", Parent, "must be an instance") return end
 	if typeof(Class) ~= "string" then warn("Class:", Class, "must be a string") return end
 	for i, v in ipairs(Parent:GetDescendants()) do
-		if v:IsA(Class) then
+		if v.ClassName == Class then
 			return v
 		end
 	end
@@ -36,18 +36,19 @@ function SomeFunctions.RecursiveFindFirstChildOfClass(Character, "IntValue")
 
 --------------------Object Creation--------------------
 
-function SomeFunctions.CreateAnim(ID: string): Animation?
+function SomeFunctions.CreateAnimation(ID: string): Animation
 	if not ID then warn("AnimationId cannot be nil") return end
 	local anim = Instance.new("Animation")
 	anim.AnimationId = string.match(ID, "^rbxassetid://") and ID or "rbxassetid://"..ID
 	return anim
 end
 --[[^like the function below but only for animations
-SomeFunctions.CreateAnim"123456789"
+SomeFunctions.CreateAnimtion"123456789"
 ]]
 
-function SomeFunctions.CreateObjectWithProperties(Object: string, Properties: {[String]: any}): Instance
-	local obj = Instance.new(Object)
+function SomeFunctions.CreateObjectWithProperties(ClassName: string, Properties: {[string]: any}): Instance
+	local obj = Instance.new(ClassName)
+	if not Properties then return end
 	for i, v in pairs(Properties) do
 		obj[i] = v
 	end
@@ -57,14 +58,17 @@ end
 SomeFunctions.CreateObjectWithProperties("Animation", {AnimationId = "123456789"})
 ]]
 
-
 --------------------Table Functions--------------------
 
-function SomeFunctions.DeepCopy(Table: {}): Table
+function SomeFunctions.DeepCopy(Table: {}, Depth: number?): {}
 	local new = {}
+	Depth = Depth or math.huge
+	local CurrentLevel = 1
 	for i, v in pairs(Table) do
 		if typeof(v) == "table" then
-			new[i] = SomeFunctions.DeepCopy(v)
+			if Depth - 1 >= 1 then
+				new[i] = SomeFunctions.DeepCopy(v, Depth - 1)
+			end
 		else
 			new[i] = v
 		end
@@ -151,7 +155,7 @@ SomeFunctions.RemoveTagsFromObjects({["Iron Weapon"] = {IronSword, IronAxe}, "Po
 
 --------------------Ancestry Functions--------------------
 
-function SomeFunctions.GetAncestorsInTable(Child: Instance): Table?
+function SomeFunctions.GetAncestorsInTable(Child: Instance): {}
 	if typeof(Child) ~= "Instance" then warn("Child:", Child, "must be an instance") return end
 	if Child.Parent == nil then
 		return nil
@@ -167,7 +171,7 @@ end
 function SomeFunctions.GetAncestorsInTable(Part)
 ]]
 
-function SomeFunctions.FindFirstAncestorWithTag(Child: Instance, Tag: string): Instance?
+function SomeFunctions.FindFirstAncestorWithTag(Child: Instance, Tag: string): Instance
 	if typeof(Child) ~= "Instance" then warn("Child:", Child, "must be an instance") return end
 	if typeof(Tag) ~= "string" then warn("Tag:", Tag, "must be a string") return end
 	for i, v in ipairs(SomeFunctions.GetAncestorsInTable(Child)) do
