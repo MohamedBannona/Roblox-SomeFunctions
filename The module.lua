@@ -23,11 +23,16 @@ SomeFunctions.FindFirstChildWithTag(Character, "Weapon")
 function SomeFunctions.RecursiveFindFirstChildOfClass(Parent: Instance, Class: string): Instance
 	if typeof(Parent) ~= "Instance" then warn("Parent:", Parent, "must be an instance") return end
 	if typeof(Class) ~= "string" then warn("Class:", Class, "must be a string") return end
-	for i, v in ipairs(Parent:GetDescendants()) do
+	for i, v in ipairs(Parent:GetChildren()) do
 		if v.ClassName == Class then
 			return v
 		end
+		local child = SomeFunctions.RecursiveFindFirstChildOfClass(v, Class)
+		if child then
+			return child
+		end
 	end
+	return nil
 end
 --[[^Returns first Descendant found of a class
 function SomeFunctions.RecursiveFindFirstChildOfClass(Character, "IntValue")
